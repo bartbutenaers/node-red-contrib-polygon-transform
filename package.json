@@ -1,0 +1,25 @@
+{
+    "name"         : "node-red-contrib-polygon-transform",
+    "version"      : "1.0.0",
+    "description"  : "A Node-RED node to transform polygons in different formats",
+    "dependencies": {
+    },
+    "author": {
+        "name": "Bart Butenaers"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "polygon", "polyline", "bbox", "bounding box", "coordinates", "transform", "points"],
+    "bugs": {
+        "url": "https://github.com/bartbutenaers/node-red-contrib-polygon-transform/issues"
+    },
+    "homepage": "https://github.com/bartbutenaers/node-red-contrib-polygon-transform",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bartbutenaers/node-red-contrib-polygon-transform.git"
+    },
+    "node-red"     : {
+        "nodes": {
+            "polygon-transform": "polygon_transform.js"
+        }
+    }
+}
