@@ -1,0 +1,107 @@
+<!--
+  Copyright 2021, Bart Butenaers
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/javascript">   
+    RED.nodes.registerType('polygon-transform',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            nestedObject: {value:"payload", required:true},
+            sourceProperty: {value:"", required:true},
+            sourceType: {value:"polygon_array", required:true},
+            targetProperty: {value:"", required:true},
+            targetType: {value:"polygon_array", required:true},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-subscript",
+        label: function() {
+            return this.name || "polygon transform";
+        },
+        oneditprepare: function() { 
+            var node = this;
+
+            // Custom typedefinition to represent a 'msg'.
+            // Cannot use the standard Node-RED 'msg' type, because its regex doesn't allow "[]" in the nested object path
+            var msgTypeDefinition = {
+                value: 'msg',
+                label: 'msg.',
+                hasValue: true,
+                validate: function(v) {
+                    return /^([a-zA-Z0-9_]+(\[\d*\])?\.?)+$/.test(v);
+                }
+            }
+            
+            $('#node-input-nestedObject').typedInput({
+                typeField: $("#node-input-nestedObject-type"),
+                types: [msgTypeDefinition]
+            });
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="polygon-transform">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    </br>
+    <div class="form-row">
+        <label for="node-input-nestedObject"><i class="fa fa-ellipsis-h"></i> Nested obj.</label>
+        <input type="text" id="node-input-nestedObject" placeholder="dot notation path">
+        <input id="node-input-nestedObject-type" type="hidden">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sourceProperty"><i class="fa fa-sign-in"></i> Source prop.</label>
+        <input type="text" id="node-input-sourceProperty" placeholder="source property name">
+    </div>    
+    <div class="form-row">
+        <label for="node-input-sourceType"><i class="fa fa-question-circle-o"></i> Source type</label>
+        <select id="node-input-sourceType" style="width:70%;">
+            <option value="polygon_array">Polygon 2D array - [[x1,y1], [x2,y2], ...]]</option>
+            <option value="polygon_array_objects">Polygon object array - [{x:..,y:..}, {x:..,y:..}, ...]</option>
+            <option value="bbox_array_xTopLeft_yTopLeft_width_height">Bbox - [xTopLeftx, yTopLeft, width, height]</option>
+            <option value="bbox_array_xTopLeft_yTopLeft_xBottomRight_yBottomRight">Bbox - [xTopLeft, yTopLeft, xBottomRight, yBottomRight]</option>
+            <option value="bbox_array_xCenter_yCenter_width_height">Bbox center - [xCenter, yCenter, width, height]</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-targetProperty"><i class="fa fa-sign-out"></i> Target prop.</label>
+        <input type="text" id="node-input-targetProperty" placeholder="target property name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-targetType"><i class="fa fa-pencil-square-o"></i> Target type</label>
+        <select id="node-input-targetType" style="width:70%;">
+            <option value="polygon_array">Polygon 2D array - [[x1,y1], [x2,y2], ...]]</option>
+            <option value="polygon_array_objects">Polygon object array - [{x:..,y:..}, {x:..,y:..}, ...]</option>
+            <option value="bbox_array_xTopLeft_yTopLeft_width_height">Bbox - [xTopLeftx, yTopLeft, width, height]</option>
+            <option value="bbox_array_xTopLeft_yTopLeft_xBottomRight_yBottomRight">Bbox - [xTopLeft, yTopLeft, xBottomRight, yBottomRight]</option>
+            <option value="bbox_array_xCenter_yCenter_width_height">Bbox center - [xCenter, yCenter, width, height]</option>
+        </select>
+    </div>    
+</script>
+
+<script type="text/x-red" data-help-name="polygon-transform">
+<p>A Node-RED node to execute transforms polygon from one format to another.</p>
+<p>See my <a target="_blank" href="https://github.com/bartbutenaers/node-red-contrib-polygon-transform/blob/main/README.md">Github readme</a> page for more information and example flows.  Note that those example flows are also available via the Node-RED <a target="_blank" href="notused" onclick="RED.actions.invoke('core:show-import-dialog');return false;">Import dialog</a>.</p>
+<p><strong>Nested object:</strong><br/>
+Specify the path of the nested object in the input message (e.g. <code>msg.payload</code>), which has a property that needs to be transformed.</p>
+<p><strong>Source property:</strong><br/>
+Specify which property of the input object contains the polygon numbers (e.g. <code>msg.payload.bbox</code>), which needs to be transformed.</p>
+<p><strong>Source type:</strong><br/>
+Specify which kind of polygon format is being injected in the source property.  Multiple types are available, like different types of bounding boxes, and so on...</p>
+<p><strong>Target property:</strong><br/>
+Specify in which property of the nested object the transformed value needs to be stored.  When the target property is equal to the source property, then the original polygon data will be overwritten by the transformed polygon data.</p>
+<p><strong>Target type</code>:</strong><br/>
+Specify which kind of polygon format needs to be stored in the target property.  Multiple types are available, like different types of bounding boxes, and so on...</p>   
+</script>
